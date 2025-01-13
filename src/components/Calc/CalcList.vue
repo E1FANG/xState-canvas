@@ -1,6 +1,7 @@
 <script setup>
 import { ref, useTemplateRef, onMounted } from "vue";
 import Calc from "@/components/Icon/calc";
+import { useCalcDrag } from "@/hooks/useCalcDrag";
 
 const calcList = ref([
   {
@@ -10,22 +11,7 @@ const calcList = ref([
 
 const calcRefs = useTemplateRef("items");
 
-// const draggable = document.getElementById("draggable");
-
-// draggable.addEventListener("dragstart", (e) => {
-//   e.dataTransfer.setData("text/plain", null); // 必须设置才能开始拖拽
-//   draggable.style.opacity = "0.5"; // 拖拽时稍微透明
-// });
-
-onMounted(() => {
-  console.log(calcRefs);
-  calcRefs.value.forEach((calc) => {
-    calc.addEventListener("dragstart", (e) => {
-      e.dataTransfer.setData("text/plain", null); // 必须设置才能开始拖拽
-      calc.style.opacity = "0.5"; // 拖拽时稍微透明
-    });
-  });
-});
+useCalcDrag(calcRefs, calcList);
 </script>
 
 <template>

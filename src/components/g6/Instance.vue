@@ -1,6 +1,9 @@
 <script setup>
 import { Graph } from "@antv/g6";
+import { registerG6Behavior } from "./g6.js";
 import { onMounted, shallowRef } from "vue";
+
+registerG6Behavior();
 
 const data = {
   // 点集
@@ -27,11 +30,12 @@ const data = {
 
 const graph = shallowRef();
 
-onMounted(() => {
+const initGraph = async () => {
+  const container = document.querySelector("#mountNode");
   graph.value = new Graph({
     container: "mountNode", // String | HTMLElement，必须，在 Step 1 中创建的容器 id 或容器本身
-    width: 800, // Number，必须，图的宽度
-    height: 500, // Number，必须，图的高度
+    width: container.width, // Number，必须，图的宽度
+    height: container.height, // Number，必须，图的高度
     data,
     node: {
       palette: {
@@ -42,11 +46,28 @@ onMounted(() => {
     layout: {
       type: "force",
     },
-    behaviors: ["drag-canvas", "drag-node"],
+    behaviors: ["custom-behavior"],
   });
-  console.log(graph.value);
+  await graph.value.render(); // 渲染图
+};
 
-  graph.value.render(); // 渲染图
+onMounted(async () => {
+  await initGraph();
+
+  const canvas = graph.value.getCanvas().config.container;
+  canvas.addEventListener("dragover", (e) => {
+    e.preventDefault(); // 允许拖拽
+  });
+  canvas.addEventListener("drop", (e) => {
+    const { layerX, layerY } = e;
+    graph.value.addNodeData([
+      {
+        id: "node-" + Date.now(),
+        style: { x: layerX, y: layerY },
+      },
+    ]);
+    graph.value.draw();
+  });
 });
 </script>
 
