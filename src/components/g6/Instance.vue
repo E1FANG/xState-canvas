@@ -10,13 +10,21 @@ const data = {
   nodes: [
     {
       id: "node1", // String，该节点存在则必须，节点的唯一标识
-      x: 100, // Number，可选，节点位置的 x 值
-      y: 200, // Number，可选，节点位置的 y 值
+      x: 50, // Number，可选，节点位置的 x 值
+      y: 50, // Number，可选，节点位置的 y 值
+      style: {
+        fill: "#1783FF",
+        size: 32,
+      },
     },
     {
       id: "node2", // String，该节点存在则必须，节点的唯一标识
-      x: 300, // Number，可选，节点位置的 x 值
-      y: 200, // Number，可选，节点位置的 y 值
+      x: 60, // Number，可选，节点位置的 x 值
+      y: 60, // Number，可选，节点位置的 y 值
+      style: {
+        size: 32,
+        fill: "#1783FF",
+      },
     },
   ],
   // 边集
@@ -38,17 +46,15 @@ const initGraph = async () => {
     height: container.height, // Number，必须，图的高度
     data,
     node: {
-      palette: {
-        type: "group",
-        field: "cluster",
-      },
+      type: "custom-node",
     },
     layout: {
       type: "force",
     },
-    behaviors: ["custom-behavior"],
+    behaviors: ["custom-behavior", "drag-element"],
   });
   await graph.value.render(); // 渲染图
+  window.graph = graph.value;
 };
 
 onMounted(async () => {
@@ -63,7 +69,11 @@ onMounted(async () => {
     graph.value.addNodeData([
       {
         id: "node-" + Date.now(),
-        style: { x: layerX, y: layerY },
+        type: "custom-node",
+        style: {
+          x: layerX,
+          y: layerY,
+        },
       },
     ]);
     graph.value.draw();
