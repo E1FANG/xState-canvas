@@ -5,7 +5,7 @@ import { useCalcDrag } from "@/hooks/useCalcDrag";
 
 const calcList = ref([
   {
-    id: "aggregation",
+    type: "aggregation",
   },
 ]);
 
@@ -24,7 +24,7 @@ useCalcDrag(calcRefs, calcList);
         class="inline-block"
         draggable="true"
       >
-        <Calc :name="item.id" />
+        <Calc :name="item.type" />
       </div>
     </div>
   </div>

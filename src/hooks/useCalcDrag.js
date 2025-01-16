@@ -4,9 +4,8 @@ export const useCalcDrag = (calcRefs, calcList) => {
   onMounted(() => {
     calcRefs.value.forEach((calc, index) => {
       calc.addEventListener("dragstart", (e) => {
-        e.dataTransfer.setData("text/plain", {
-          ...calcList.value[index],
-        }); // 必须设置才能开始拖拽
+
+        e.dataTransfer.setData('application/json', JSON.stringify(calcList.value[index]))
         calc.style.opacity = "0.5"; // 拖拽时稍微透明
       });
 

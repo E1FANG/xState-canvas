@@ -2,6 +2,7 @@
 import { Graph } from "@antv/g6";
 import { registerG6Behavior } from "./g6.js";
 import { onMounted, shallowRef } from "vue";
+import { CalcNodeEnum } from "@/components/Calc/CalcNodeEnum.js";
 
 registerG6Behavior();
 
@@ -12,18 +13,16 @@ const data = {
       id: "node1", // String，该节点存在则必须，节点的唯一标识
       x: 50, // Number，可选，节点位置的 x 值
       y: 50, // Number，可选，节点位置的 y 值
-      style: {
-        fill: "#1783FF",
-        size: 32,
+      data: {
+        type: "aggregation",
       },
     },
     {
       id: "node2", // String，该节点存在则必须，节点的唯一标识
       x: 60, // Number，可选，节点位置的 x 值
       y: 60, // Number，可选，节点位置的 y 值
-      style: {
-        size: 32,
-        fill: "#1783FF",
+      data: {
+        type: "aggregation",
       },
     },
   ],
@@ -46,7 +45,12 @@ const initGraph = async () => {
     height: container.height, // Number，必须，图的高度
     data,
     node: {
-      type: "custom-node",
+      type: (d) => d.type || "custom-node",
+      style: {
+        size: 32,
+        fill: "#1783FF",
+        labelText: (d) => CalcNodeEnum[d.data.type],
+      },
     },
     layout: {
       type: "force",
@@ -66,10 +70,12 @@ onMounted(async () => {
   });
   canvas.addEventListener("drop", (e) => {
     const { layerX, layerY } = e;
+    const data = JSON.parse(e.dataTransfer.getData("application/json"));
     graph.value.addNodeData([
       {
         id: "node-" + Date.now(),
-        type: "custom-node",
+        // type: "star",
+        data,
         style: {
           x: layerX,
           y: layerY,
